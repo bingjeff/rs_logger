@@ -1,5 +1,6 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/flags/usage.h"
 #include "absl/strings/str_cat.h"
 #include <librealsense2/rs.hpp>
 #include <chrono>
@@ -40,6 +41,7 @@ int main(int argc, char *argv[])
 try
 {
   absl::ParseCommandLine(argc, argv);
+  absl::SetProgramUsageMessage("Record data from Realsense cameras for a fixed period of time.");
   std::cout << "Looking for devices...\n";
   rs2::context rs_context;
   auto device_list = rs_context.query_devices();
