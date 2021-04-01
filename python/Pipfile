@@ -1,0 +1,35 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "https://rospypi.github.io/simple/"
+verify_ssl = true
+name = "rospypi"
+
+[packages]
+numpy = "*"
+pyrealsense2 = "*"
+jupyter = "*"
+matplotlib = "*"
+plotly = "*"
+pandas = "*"
+lz4 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+
+[packages.rospy]
+version = "*"
+index = "rospypi"
+
+[packages.rosbag]
+version = "*"
+index = "rospypi"
+
+[packages.roslz4]
+version = "*"
+index = "rospypi"
