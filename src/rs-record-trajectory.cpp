@@ -40,8 +40,8 @@ rs2::config setup_tracking_camera(const rs2::device &input_device, const std::st
 int main(int argc, char *argv[])
 try
 {
-  absl::ParseCommandLine(argc, argv);
   absl::SetProgramUsageMessage("Record data from Realsense cameras for a fixed period of time.");
+  absl::ParseCommandLine(argc, argv);
   std::cout << "Looking for devices...\n";
   rs2::context rs_context;
   auto device_list = rs_context.query_devices();
