@@ -1,4 +1,5 @@
 #include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "absl/strings/str_cat.h"
 #include <librealsense2/rs.hpp>
 #include <chrono>
@@ -38,6 +39,7 @@ rs2::config setup_tracking_camera(const rs2::device &input_device, const std::st
 int main(int argc, char *argv[])
 try
 {
+  absl::ParseCommandLine(argc, argv);
   std::cout << "Looking for devices...\n";
   rs2::context rs_context;
   auto device_list = rs_context.query_devices();
@@ -45,19 +47,18 @@ try
   // Get default device configurations for tracking and depth cameras.
   const std::string kCameraTypeD400 = "D400";
   const std::string kCameraTypeT200 = "T200";
+  const std::string kCommonFilePath = absl::StrCat(absl::GetFlag(FLAGS_output_dir), "/", absl::GetFlag(FLAGS_file_prefix));
   std::vector<rs2::config> device_configurations;
   for (const auto &device : device_list)
   {
     if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeD400)
     {
-      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), "/",
-                                          absl::GetFlag(FLAGS_file_prefix), "-depth.bag");
+      std::string filename = absl::StrCat(kCommonFilePath, "-depth.bag");
       device_configurations.emplace_back(setup_depth_camera(device, filename));
     }
     if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeT200)
     {
-      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), "/",
-                                          absl::GetFlag(FLAGS_file_prefix), "-pose.bag");
+      std::string filename = absl::StrCat(kCommonFilePath, "-pose.bag");
       device_configurations.emplace_back(setup_tracking_camera(device, filename));
     }
   }
@@ -74,8 +75,9 @@ try
   std::cout << "done.\n";
 
   // Log for a fixed amount of time.
-  std::cout << "Logging: ";
-  auto time_end = std::chrono::system_clock::now() + std::chrono::seconds(absl::GetFlag(FLAGS_record_for_s));
+  int record_length = absl::GetFlag(FLAGS_record_for_s);
+  std::cout << "Logging for " << record_length << "s.\n  ";
+  auto time_end = std::chrono::system_clock::now() + std::chrono::seconds(record_length);
   while (std::chrono::system_clock::now() < time_end)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -90,6 +92,7 @@ try
     pipe.stop();
   }
   std::cout << "done.\n";
+  std::cout << "Saved files to: " << kCommonFilePath << "-*.bag\n";
 
   return EXIT_SUCCESS;
 }
