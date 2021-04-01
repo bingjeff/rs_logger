@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/mnt/d/projects/librealsense/third-party/tclap/**"
+                "${workspaceFolder}/../librealsense/third-party/tclap/**",
+                "${workspaceFolder}/subprojects/abseil-cpp-20200923.2/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

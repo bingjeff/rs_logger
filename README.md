@@ -1,7 +1,9 @@
 # rs_logger
 ## Install
 
-Assumes that you have installed the RS utils and dev packages.
+Assumes that you have installed the [RS utils and dev packages](https://github.com/IntelRealSense/librealsense).
+
+Trying out build management with [Meson and Ninja](https://mesonbuild.com/Getting-meson.html).
 
 Then should be able to build with:
 

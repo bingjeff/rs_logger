@@ -2,23 +2,15 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "cppbuild",
-			"label": "C/C++: g++ build active file",
-			"command": "/usr/bin/g++",
-			"args": [
-				"-g",
-				"${file}",
-				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}"
+			"type": "meson",
+			"target": "rs_logger",
+			"mode": "build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
 			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"detail": "compiler: /usr/bin/g++"
+			"problemMatcher": [],
+			"label": "Meson: Build rs_logger"
 		}
 	]
 }

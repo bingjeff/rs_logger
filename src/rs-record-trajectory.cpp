@@ -1,12 +1,19 @@
+#include "absl/flags/flag.h"
+#include "absl/strings/str_cat.h"
 #include <librealsense2/rs.hpp>
 #include <chrono>
 #include <iostream>
 #include <string.h>
 #include <thread>
 
-rs2::config setup_depth_camera(const rs2::device& input_device, const std::string& file_counter) {
+ABSL_FLAG(std::string, output_dir, "/tmp", "Directory to store the data.");
+ABSL_FLAG(std::string, file_prefix, "000", "File prefix to name the file.");
+ABSL_FLAG(int, record_for_s, 5, "Number of seconds to record for.");
+
+rs2::config setup_depth_camera(const rs2::device &input_device, const std::string &filename)
+{
   rs2::config pipeline_config;
-  pipeline_config.enable_record_to_file("/tmp/" + file_counter +"-depth.bag");
+  pipeline_config.enable_record_to_file(filename);
   std::string device_name = input_device.get_info(RS2_CAMERA_INFO_NAME);
   std::string serial_number = input_device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER);
   std::cout << "Enabling: " << device_name << " " << serial_number << "... ";
@@ -15,9 +22,10 @@ rs2::config setup_depth_camera(const rs2::device& input_device, const std::strin
   return pipeline_config;
 }
 
-rs2::config setup_tracking_camera(const rs2::device& input_device, const std::string& file_counter) {
+rs2::config setup_tracking_camera(const rs2::device &input_device, const std::string &filename)
+{
   rs2::config pipeline_config;
-  pipeline_config.enable_record_to_file("/tmp/" + file_counter +"-pose.bag");
+  pipeline_config.enable_record_to_file(filename);
   pipeline_config.enable_stream(RS2_STREAM_POSE, RS2_FORMAT_6DOF);
   std::string device_name = input_device.get_info(RS2_CAMERA_INFO_NAME);
   std::string serial_number = input_device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER);
@@ -37,21 +45,28 @@ try
   // Get default device configurations for tracking and depth cameras.
   const std::string kCameraTypeD400 = "D400";
   const std::string kCameraTypeT200 = "T200";
-  std::string file_counter = "000";
   std::vector<rs2::config> device_configurations;
-  for (const auto& device : device_list) {
-    if(device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeD400) {
-      device_configurations.emplace_back(setup_depth_camera(device, file_counter));
-    } 
-    if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeT200) {
-      device_configurations.emplace_back(setup_tracking_camera(device, file_counter));
+  for (const auto &device : device_list)
+  {
+    if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeD400)
+    {
+      std::string filename = absl::StrCat(absl::GetFlag(FLAG_output_dir), '/',
+                                          absl::GetFlag(FLAG_file_prefix), '-depth.bag');
+      device_configurations.emplace_back(setup_depth_camera(device, filename));
+    }
+    if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeT200)
+    {
+      std::string filename = absl::StrCat(absl::GetFlag(FLAG_output_dir), '/',
+                                          absl::GetFlag(FLAG_file_prefix), '-pose.bag');
+      device_configurations.emplace_back(setup_tracking_camera(device, filename));
     }
   }
 
   // Setup the pipelines to start logging.
   std::cout << "Starting pipelines... ";
   std::vector<rs2::pipeline> pipelines;
-  for (auto& device_config : device_configurations) {
+  for (auto &device_config : device_configurations)
+  {
     rs2::pipeline pipe(rs_context);
     pipe.start(device_config);
     pipelines.emplace_back(pipe);
@@ -60,20 +75,22 @@ try
 
   // Log for a fixed amount of time.
   std::cout << "Logging: ";
-  auto time_end = std::chrono::system_clock::now() + std::chrono::seconds(5);
-  while (std::chrono::system_clock::now() < time_end) {
+  auto time_end = std::chrono::system_clock::now() + std::chrono::seconds(absl::GetFlag(FLAG_record_for_s));
+  while (std::chrono::system_clock::now() < time_end)
+  {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     std::cout << ".";
   }
   std::cout << " done.\n";
-  
+
   // Close the pipelines.
   std::cout << "Stopping pipelines... ";
-  for (auto& pipe : pipelines) {
+  for (auto &pipe : pipelines)
+  {
     pipe.stop();
   }
   std::cout << "done.\n";
-  
+
   return EXIT_SUCCESS;
 }
 catch (const rs2::error &e)
