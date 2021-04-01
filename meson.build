@@ -1,6 +1,6 @@
 project('rs_logger', 'cpp',
   version : '0.1',
-  default_options : ['warning_level=3', 'cpp_std=c++17'])
+  default_options : ['warning_level=1', 'cpp_std=c++17'])
 
 # Subprojects.
 prj_absl = subproject('abseil-cpp')

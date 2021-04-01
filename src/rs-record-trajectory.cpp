@@ -50,14 +50,14 @@ try
   {
     if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeD400)
     {
-      std::string filename = absl::StrCat(absl::GetFlag(FLAG_output_dir), '/',
-                                          absl::GetFlag(FLAG_file_prefix), '-depth.bag');
+      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), '/',
+                                          absl::GetFlag(FLAGS_file_prefix), '-depth.bag');
       device_configurations.emplace_back(setup_depth_camera(device, filename));
     }
     if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeT200)
     {
-      std::string filename = absl::StrCat(absl::GetFlag(FLAG_output_dir), '/',
-                                          absl::GetFlag(FLAG_file_prefix), '-pose.bag');
+      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), '/',
+                                          absl::GetFlag(FLAGS_file_prefix), '-pose.bag');
       device_configurations.emplace_back(setup_tracking_camera(device, filename));
     }
   }
@@ -75,7 +75,7 @@ try
 
   // Log for a fixed amount of time.
   std::cout << "Logging: ";
-  auto time_end = std::chrono::system_clock::now() + std::chrono::seconds(absl::GetFlag(FLAG_record_for_s));
+  auto time_end = std::chrono::system_clock::now() + std::chrono::seconds(absl::GetFlag(FLAGS_record_for_s));
   while (std::chrono::system_clock::now() < time_end)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
