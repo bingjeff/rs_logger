@@ -50,14 +50,14 @@ try
   {
     if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeD400)
     {
-      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), '/',
-                                          absl::GetFlag(FLAGS_file_prefix), '-depth.bag');
+      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), "/",
+                                          absl::GetFlag(FLAGS_file_prefix), "-depth.bag");
       device_configurations.emplace_back(setup_depth_camera(device, filename));
     }
     if (device.get_info(RS2_CAMERA_INFO_PRODUCT_LINE) == kCameraTypeT200)
     {
-      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), '/',
-                                          absl::GetFlag(FLAGS_file_prefix), '-pose.bag');
+      std::string filename = absl::StrCat(absl::GetFlag(FLAGS_output_dir), "/",
+                                          absl::GetFlag(FLAGS_file_prefix), "-pose.bag");
       device_configurations.emplace_back(setup_tracking_camera(device, filename));
     }
   }
