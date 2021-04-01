@@ -5,9 +5,17 @@ Assumes that you have installed the [RS utils and dev packages](https://github.c
 
 Trying out build management with [Meson and Ninja](https://mesonbuild.com/Getting-meson.html).
 
-Then should be able to build with:
 
+Things that probably need to be installed:
 ```
-g++ -std=c++11 rs-record-trajectory.cpp -lrealsense2 -o record-trajectory
+sudo apt install cmake
+sudo apt install ninja-build
+sudo apt install librealsense-dev
+sudo apt install librealsense-dbg
+```
+
+Installing `meson` should just be:
+```
+pip3 install --user meson
 ```
 
