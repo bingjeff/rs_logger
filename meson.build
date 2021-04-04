@@ -2,6 +2,11 @@ project('rs_logger', 'cpp',
   version : '0.1',
   default_options : ['warning_level=1', 'cpp_std=c++17'])
 
+if host_machine.cpu_family() == 'aarch64'
+  # ABSL on ARM64 needs this flag: https://www.gitmemory.com/issue/abseil/abseil-cpp/662/612517861
+  add_global_arguments('-march=armv8-a+crypto', language: 'cpp')
+endif
+
 # Subprojects.
 prj_absl = subproject('abseil-cpp')
 
